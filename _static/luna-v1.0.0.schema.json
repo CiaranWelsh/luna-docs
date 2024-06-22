@@ -1,0 +1,389 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Luna Schema",
+  "description": "A JSON schema for standardized experimental description, analysis settings and (optionally) expected results.",
+  "version": "1.0.0",
+  "definitions": {
+    "analysisConfiguration": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "oneOf": [
+            {
+              "type": "string",
+              "description": "A unique identifier for the analysis configuration."
+            },
+            {
+              "type": "integer",
+              "description": "A unique identifier for the analysis configuration."
+            }
+          ],
+          "description": "A unique identifier for the analysis configuration."
+        },
+        "outputFile": {
+          "type": "string",
+          "description": "Path for the output file"
+        },
+        "layout": {
+          "type": "string",
+          "description": "Either 'single' or 'quad'",
+          "default": "single"
+        },
+        "epsSpace": {
+          "type": "integer",
+          "description": "Space gap for the centroiding algorithm in unit of pixels",
+          "default": 1
+        },
+        "epsTime": {
+          "type": "string",
+          "description": "Time gap for the centroiding algorithm with units (e.g., '500ns'). Valid units: s, ms, us, ns, ps, fs.",
+          "default": "100ns"
+        },
+        "bufferSize": {
+          "type": "integer",
+          "description": "The size of the buffer used for the second clustering algorithm. It stores how many clusters to buffer at a time.",
+          "default": "10"
+        },
+        "minClusterSize": {
+          "type": "integer",
+          "description": "The smallest size for a cluster to be a cluster, in units of pixels",
+          "default": 1
+        },
+        "maxClusterSize": {
+          "type": "integer",
+          "description": "The largest size for a cluster to be a cluster, in units of pixels. Use 'null' for no maximum size.",
+          "default": "null"
+        },
+        "disableClustering": {
+          "type": "boolean",
+          "description": "Disable clustering functionality which is on by default.",
+          "default": false
+        },
+        "ctotCut": {
+          "type": "integer",
+          "description": "The value of the cut used when computing the timewalk correction look up table. Must be increments of 25ns.",
+          "default": 1500
+        },
+        "timewalkFile": {
+          "type": "string",
+          "description": "A path to a hdf5 file from a previous run of tpx3dump which contains the timewalk correction matrix."
+        },
+        "accumulativeTimewalk": {
+          "type": "boolean",
+          "description": "Accumulate timewalk correction matrix from the timewalk-file with new data from this run of tpx3dump.",
+          "default": false
+        },
+        "timeBinInterval": {
+          "type": "string",
+          "description": "The interval in units of time used to segment data for further processing after reading and unpacking.",
+          "default": "all"
+        },
+        "numTimeBins": {
+          "type": "integer",
+          "description": "Number of time bins to use.",
+          "default": 5
+        },
+        "logLevel": {
+          "type": "string",
+          "description": "Logging level [possible values: off, trace, debug, info, warn, error]",
+          "default": "info"
+        },
+        "rawOnly": {
+          "type": "boolean",
+          "description": "Flag to indicate processing data from binary to raw data only, no sorting or clustering",
+          "default": false
+        },
+        "nPhases": {
+          "type": "integer",
+          "description": "The value of the number of phases for the phase locked loop (PLL) used for acquisition.",
+          "default": 16
+        },
+        "inputFormat": {
+          "type": "string",
+          "description": "The input format for Tpx4 detector type.",
+          "enum": [
+            "ASI",
+            "NIKHEF"
+          ]
+        },
+        "maxDelay": {
+          "type": "number",
+          "description": "The maximum delay difference between arrival of the heartbeat and the hits, expressed as a portion of wraparound period. Tpx4 only. Must be less than 1.0. Default is 1/4 of the wraparound period."
+        },
+        "discardPixelData": {
+          "type": "boolean",
+          "description": "Controls whether PixelHit data are output to hdf5 or not."
+        },
+        "compressionLevel": {
+          "anyOf": [
+            {
+              "type": "null",
+              "description": "Disables compression"
+            },
+            {
+              "type": "string",
+              "enum": [
+                "off",
+                "none",
+                "0"
+              ]
+            },
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9,
+              "description": "Determines the level of compression. 1 is least compression with fastest performance and 9 is maximum compression with slowest performance."
+            }
+          ]
+        },
+        "compressionAlgorithm": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "BloscLz4hc",
+                "BloscBlosclz",
+                "BloscSnappy",
+                "BloscZlib",
+                "BloscLz4",
+                "Deflate",
+                "BloscZstd"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Name of the compression algorithm to use. "
+        },
+        "compressionShuffle": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "None",
+                "none",
+                "bit",
+                "Bit",
+                "byte",
+                "Byte"
+              ],
+              "description": "The \"shuffle\" argument to the Blosc compression algorithms. "
+            },
+            {
+              "type": "null",
+              "description": "No shuffle argument."
+            }
+          ]
+        },
+        "compressionNthreads": {
+          "type": "integer",
+          "description": "The number of threads to use for blosc compression of hdf5 data"
+        },
+        "hdf5ChunkSize": {
+          "anyOf": [
+            {
+              "type": "null",
+              "description": "Use default chunk size or hdf5"
+            },
+            {
+              "type": "integer",
+              "description": "Set the chunk size parameter for hdf5 library"
+            }
+          ]
+        },
+        "validationRules": {
+          "type": "object",
+          "properties": {
+            "rules": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "subject": {
+                    "type": "string"
+                  },
+                  "predicate": {
+                    "type": "string"
+                  },
+                  "expectation": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "x": {
+                              "type": "integer"
+                            },
+                            "y": {
+                              "type": "integer"
+                            },
+                            "toa": {
+                              "type": "integer"
+                            },
+                            "tot": {
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "x",
+                            "y",
+                            "toa",
+                            "tot"
+                          ]
+                        }
+                      },
+                      {
+                        "type": "boolean"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "subject",
+                  "predicate",
+                  "expectation"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "id",
+        "outputFile"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "properties": {
+    "timepixSchemaVersion": {
+      "type": "string",
+      "description": "The version of the schema this configuration complies with."
+    },
+    "datasets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "A unique identifier for the dataset, incorporating an abbreviation for the application type."
+          },
+          "application": {
+            "type": "string",
+            "description": "The application type of the dataset.",
+            "enum": [
+              "MSI",
+              "VMI",
+              "INT",
+              "NEU",
+              "PIV",
+              "COS",
+              "TEM",
+              "OTH"
+            ]
+          },
+          "detectorType": {
+            "type": "string",
+            "description": "Detector type",
+            "enum": [
+              "Tpx3",
+              "Tpx4"
+            ]
+          },
+          "inputFormat": {
+            "type": "string",
+            "description": "The input format for Tpx4 detector type, constant across all configurations.",
+            "enum": [
+              "ASI",
+              "NIKHEF",
+              "asi",
+              "nikhef",
+              "tpx4",
+              "tpx4_nikhef"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The id for a data set. Should be unique. Multiple datasets are allowed in one configuration file."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The name of a dataset."
+                },
+                "path": {
+                  "type": "string",
+                  "description": "The path of the file or directory, relative to TimepixDataRoot root."
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          },
+          "analysis": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/analysisConfiguration"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "data"
+        ],
+        "if": {
+          "properties": {
+            "detectorType": {
+              "const": "Tpx4"
+            }
+          }
+        },
+        "then": {
+          "required": [
+            "inputFormat"
+          ]
+        },
+        "else": {
+          "if": {
+            "properties": {
+              "detectorType": {
+                "const": "Tpx3"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "layout": {
+                "type": "string",
+                "enum": [
+                  "Tpx3Single",
+                  "Tpx3Quad"
+                ],
+                "description": "The chip layout of the dataset for Tpx3 detector type."
+              }
+            },
+            "required": [
+              "layout"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "timepixSchemaVersion",
+    "datasets"
+  ]
+}

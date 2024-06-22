@@ -1,0 +1,218 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MeasurementMetadata",
+  "type": "object",
+  "properties": {
+    "StartDateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "MeasurementFolder": {
+      "type": "string"
+    },
+    "Detector": {
+      "type": "object",
+      "properties": {
+        "Config": {
+          "type": "object",
+          "properties": {
+            "LogLevel": { "type": "integer" },
+            "BiasVoltage": { "type": "integer" },
+            "BiasEnabled": { "type": "boolean" },
+            "Polarity": { "type": "string" },
+            "Tdc": { "type": "array", "items": { "type": "string" } },
+            "PeriphClk80": { "type": "boolean" },
+            "TriggerIn": { "type": "integer" },
+            "TriggerOut": { "type": "integer" },
+            "TriggerMode": { "type": "string" },
+            "nTriggers": { "type": "integer" },
+            "TriggerPeriod": { "type": "number" },
+            "ExposureTime": { "type": "number" },
+            "DetectorOrientation": { "type": "string", "enum": ["UP", "DOWN", "LEFT", "RIGHT"], "default": "UP" },
+            "GlobalTimestampInterval": { "type": "number", "default": 0 },
+            "ChainMode": { "type": "string", "enum": ["None", "Start", "End", "Middle"], "default": "None" }
+          },
+          "required": ["LogLevel", "BiasVoltage", "BiasEnabled", "Polarity", "TriggerMode", "nTriggers", "TriggerPeriod", "ExposureTime"]
+        },
+        "Health": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "LocalTemperature": { "type": "number" },
+              "FPGATemperature": { "type": "number" },
+              "ChipTemperatures": { "type": "array", "items": { "type": "number" } },
+              "Fan1Speed": { "type": "integer" },
+              "Fan2Speed": { "type": "integer" },
+              "VDD": { "type": "array", "items": { "type": "number" } },
+              "AVDD": { "type": "array", "items": { "type": "number" } },
+              "BiasVoltage": { "type": "number" },
+              "Humidity": { "type": "integer" },
+              "Pressure": { "type": "integer", "default": 1013 }
+            }
+          }
+        },
+        "Layout": {
+          "type": "object",
+          "properties": {
+            "Chips": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Chip": { "type": "integer" },
+                  "X": { "type": "integer" },
+                  "Y": { "type": "integer" },
+                  "Orientation": { "type": "string" }
+                },
+                "required": ["Chip", "X", "Y", "Orientation"]
+              }
+            },
+            "Width": { "type": "integer" },
+            "Height": { "type": "integer" },
+            "chipType": { "type": "string", "enum": ["TPX3", "TPX4"] }
+          },
+          "required": ["Chips", "Width", "Height"]
+        },
+        "Info": {
+          "type": "object",
+          "properties": {
+            "IfaceName": { "type": "string" },
+            "SW_version": { "type": "string" },
+            "FW_version": { "type": "string" },
+            "PixCount": { "type": "integer" },
+            "RowLen": { "type": "integer" },
+            "NumberOfChips": { "type": "integer" },
+            "NumberOfRows": { "type": "integer" },
+            "MpxType": { "type": "integer" },
+            "ChipType": { "type": "string", "enum": ["TPX3", "TPX4"] },
+            "Boards": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ChipboardId": { "type": "string" },
+                  "IpAddress": { "type": "string", "format": "ipv4" },
+                  "FirmwareVersion": { "type": "string" },
+                  "PortNumber": { "type": "integer", "default": 8192 },
+                  "Chips": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "Index": { "type": "integer" },
+                        "Id": { "type": "integer" },
+                        "Name": { "type": "string" }
+                      },
+                      "required": ["Id", "Name"]
+                    }
+                  }
+                },
+                "required": ["ChipboardId", "IpAddress", "FirmwareVersion", "Chips"]
+              }
+            },
+            "SuppAcqModes": { "type": "integer" },
+            "ClockReadout": { "type": "number" },
+            "MaxPulseCount": { "type": "integer" },
+            "MaxPulseHeight": { "type": "number" },
+            "MaxPulsePeriod": { "type": "number" },
+            "TimerMaxVal": { "type": "number" },
+            "TimerMinVal": { "type": "number" },
+            "TimerStep": { "type": "number" },
+            "ClockTimepix": { "type": "number" }
+          }
+        },
+        "DACs": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "required": ["Config", "Health", "Layout", "Info", "DACs"]
+    },
+    "BPCFile": { "type": "string" },
+    "PixelMaskSource": { "type": "string" },
+    "PixelMaskFile": { "type": "string" },
+    "Destination": {
+      "type": "object",
+      "properties": {
+        "Preview": {
+          "type": "object",
+          "properties": {
+            "Period": { "type": "number" },
+            "SamplingMode": { "type": "string" },
+            "ImageChannels": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "Base": { "type": "string" },
+                  "Format": { "type": "string" },
+                  "Mode": { "type": "string" },
+                  "IntegrationSize": { "type": "integer" },
+                  "IntegrationMode": { "type": "string" },
+                  "Corrections": { "type": "array", "items": { "type": "string" } }
+                },
+                "required": ["Base", "Format", "Mode", "IntegrationSize"]
+              }
+            },
+            "HistogramChannels": {
+              "type": "array",
+              "items": { "type": "object" }
+            }
+          }
+        },
+        "Image": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Base": { "type": "string" },
+              "FilePattern": { "type": "string" },
+              "Format": { "type": "string" },
+              "Mode": { "type": "string" },
+              "IntegrationSize": { "type": "integer" },
+              "Corrections": { "type": "array", "items": { "type": "string" } }
+            },
+            "required": ["Base", "Format", "Mode", "IntegrationSize"]
+          }
+        },
+        "Raw": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Base": { "type": "string" },
+              "FilePattern": { "type": "string" },
+              "SplitStrategy": { "type": "string", "enum": ["SINGLE_FILE", "MULTI_FILE"] }
+            },
+            "required": ["Base", "FilePattern"]
+          }
+        }
+      }
+    },
+    "StopDateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "NumberOfFrames": { "type": "integer" },
+    "DestinationPath": { "type": "string" },
+    "DestinationPattern": { "type": "string" },
+    "DestinationFileType": { "type": "string" },
+    "CommentAtTimeOfMeasurement": { "type": "string" }
+  },
+  "required": [
+    "StartDateTime",
+    "MeasurementFolder",
+    "Detector",
+    "BPCFile",
+    "PixelMaskSource",
+    "Destination",
+    "StopDateTime",
+    "NumberOfFrames",
+    "DestinationPath",
+    "DestinationPattern",
+    "DestinationFileType"
+  ]
+}
